@@ -1,0 +1,4 @@
+Django>=4.0,<5.0
+djangorestframework>=3.14.0  # Django REST Framework for API
+psycopg2-binary>=2.9.9  # PostgreSQL adapter for Python
+django-cors-headers

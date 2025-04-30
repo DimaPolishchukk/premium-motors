@@ -1,0 +1,66 @@
+version: '3.8'
+services:
+
+  pgdb:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - aplication
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+
+  frontend:
+    container_name: car-frontend
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - aplication
+  
+  backend:
+    container_name: car-backend
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: pgdb
+      DB_PORT: 5432
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+      DJANGO_SUPERUSER_PASSWORD: admin123
+    command: |
+      sh -c "python manage.py migrate &&
+      python manage.py initadmin &&
+      python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      pgdb:
+        condition: service_healthy
+    networks:
+      - aplication
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8001:8080"
+    depends_on:
+      - pgdb
+    networks:
+      - aplication
+
+networks:
+  aplication:
+    driver: bridge
