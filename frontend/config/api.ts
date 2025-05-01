@@ -1,4 +1,4 @@
-const BASE_URL = "http://13.60.2.165:8000";
+const BASE_URL = "";
 
 export interface CarSpecs {
   id: number
