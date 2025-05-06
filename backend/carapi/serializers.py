@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Car, CarSpecs, CarGallery
+from .models import Car, CarSpecs, CarGallery, ContactMessage
 
 class CarSpecsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +10,11 @@ class CarGallerySerializer(serializers.ModelSerializer):
     class Meta:
         model = CarGallery
         fields = ['image_url'] 
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = '__all__'
 
 class CarSerializer(serializers.ModelSerializer):
     specs = CarSpecsSerializer()

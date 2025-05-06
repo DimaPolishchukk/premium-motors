@@ -41,3 +41,19 @@ class CarGallery(models.Model):
 
     class Meta:
         db_table = 'car_gallery'
+
+
+from django.db import models
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100)  # Ім'я користувача
+    email = models.EmailField()              # Email користувача
+    message = models.TextField()             # Повідомлення
+    submitted_at = models.DateTimeField(auto_now_add=True)  # Дата/час створення
+
+    def __str__(self):
+        return f"Message from {self.name} ({self.email})"
+
+    class Meta:
+        db_table = 'contact_messages'  # Назва таблиці в базі даних
+

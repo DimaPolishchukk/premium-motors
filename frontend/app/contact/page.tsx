@@ -24,6 +24,7 @@ const formSchema = z.object({
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,14 +35,30 @@ export default function ContactPage() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
-    // Simulate API call
-    setTimeout(() => {
-      console.log(values)
-      setIsSubmitting(false)
+    setError(null)
+
+    try {
+      const response = await fetch("/api/contact/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to submit the form.")
+      }
+
       setIsSubmitted(true)
-    }, 1000)
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (isSubmitted) {
@@ -59,6 +76,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <h1 className="text-4xl font-bold mb-8 text-center">Contact Us</h1>
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField

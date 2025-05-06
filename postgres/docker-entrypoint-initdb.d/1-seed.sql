@@ -32,6 +32,16 @@ CREATE TABLE car_gallery (
     image_url TEXT NOT NULL,
     FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE CASCADE
 );
+-- Create table for contact messages
+-- This table will store messages sent by users through the contact form
+CREATE TABLE contact_messages (
+    id SERIAL PRIMARY KEY,                         -- Унікальний ідентифікатор
+    name VARCHAR(100) NOT NULL,                    -- Ім'я користувача
+    email VARCHAR(255) NOT NULL,                   -- Email
+    message TEXT NOT NULL,                         -- Повідомлення
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Дата та час відправки
+);
+
 
 -- Insert sample data
 INSERT INTO cars (make, model, year, price, image_url, description) VALUES
